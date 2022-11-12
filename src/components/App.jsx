@@ -18,9 +18,10 @@ export const App = () => {
     authSelectors.isFetchingCurrentUser
   );
 
+  const token = useSelector((state) => state.auth.token);
   useEffect(() => {
-    dispatch(authOperations.fetchCurrentUser());
-  }, [dispatch]);
+    token && dispatch(authOperations.fetchCurrentUser());
+  }, [token]);
 
   return (
     <>

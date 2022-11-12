@@ -1,33 +1,48 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { instanceAxios } from 'redux/auth/authOperations';
+
+const axiosBaseQuery =
+  ({ baseURL } = { baseURL: '' }) =>
+  async ({ url, method, data, params }) => {
+    try {
+      const result = await instanceAxios({ url: baseURL + url, method, data, params })
+      return { data: result.data }
+    } catch (axiosError) {
+      let err = axiosError
+      return {
+        error: {
+          status: err.response?.status,
+          data: err.response?.data || err.message,
+        },
+      }
+    }
+  }
 
 export const contactsApi = createApi({
-  reducerPath: 'contacts',
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'https://connections-api.herokuapp.com',
-    prepareHeaders: (headers, { getState }) => {
-      const token = getState().auth.token;
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
+  reducerPath: 'contactsApi',
+  baseQuery: axiosBaseQuery({
+    baseURL: 'https://connections-api.herokuapp.com',
   }),
   tagTypes: ['Contact'],
-  endpoints: buider => ({
-    getContacts: buider.query({
-      query: () => '/contacts',
-      keepUnusedDataFor: 1,
+
+  endpoints: builder => ({
+    getContacts: builder.query({
+      query: () => ({
+      url: '/contacts',
+      metod: 'GET',
+    }),
       providesTags: ['Contact'],
     }),
-    addContact: buider.mutation({
+
+    addContact: builder.mutation({
       query: data => ({
         url: '/contacts',
         method: 'POST',
-        body: data,
+        data,
       }),
       invalidatesTags: ['Contact'],
     }),
-    deleteContact: buider.mutation({
+    deleteContact: builder.mutation({
       query: id => ({
         url: `/contacts/${id}`,
         method: 'DELETE',
@@ -37,8 +52,4 @@ export const contactsApi = createApi({
   }),
 });
 
-export const {
-  useGetContactsQuery,
-  useDeleteContactMutation,
-  useAddContactMutation,
-} = contactsApi;
+export const{useGetContactsQuery, useAddContactMutation, useDeleteContactMutation} = contactsApi
