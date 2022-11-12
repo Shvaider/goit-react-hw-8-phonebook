@@ -10,12 +10,13 @@ const ContactList = () => {
   const filter = useSelector(getFilter);
 // console.log(useGetContactsQuery);
   const { data: contacts, isFetching, isError } = useGetContactsQuery();
+  const normalizedFilter = filter.toLowerCase();
   
 
 
   const filteredContacts =
     filter ?
-    contacts.filter(contact => contact.name.toLowerCase().includes(filter)):contacts;
+    contacts.filter(contact => contact.name.toLowerCase().includes(normalizedFilter)):contacts;
 
   const isContactsEmpty = filteredContacts && filteredContacts.length > 0;
 

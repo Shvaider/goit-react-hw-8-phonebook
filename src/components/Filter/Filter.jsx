@@ -6,6 +6,7 @@ import { filterContact } from 'redux/contacts/contactsActions';
 
 import style from './Filter.module.css';
 
+
 const Filter = () => {
   const dispatch = useDispatch();
   const filter = useSelector(getFilter);
