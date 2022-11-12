@@ -21,7 +21,7 @@ export const App = () => {
   const token = useSelector((state) => state.auth.token);
   useEffect(() => {
     token && dispatch(authOperations.fetchCurrentUser());
-  }, [token]);
+  }, [token, dispatch]);
 
   return (
     <>
